@@ -46,7 +46,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     pdf_list = get_pdf_list(args.base_url)
     needed_dl = True
-    for i in range_with_status(len(pdf_list)):
+    for i in range_with_status(len(pdf_list) - 1):
         if needed_dl:
             time.sleep(args.delay)
         needed_dl = dl_pdf(args.base_url, pdf_list[i], args.target_dir)
