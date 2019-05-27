@@ -11,10 +11,14 @@ import os
 def dl_pdf(base_url, pdf_path, target_dir):
     full_path = urllib.parse.urljoin(base_url, pdf_path)
     target_file = os.path.join(target_dir, pdf_path)
+    if os.path.exists(target_file):
+        print(" " + target_file + " already exists! Skipping...")
+        return False
     abs_dir = os.path.dirname(target_file)
     if not os.path.exists(abs_dir):
         os.makedirs(abs_dir)
     urllib.request.urlretrieve(full_path, target_file)
+    return True
 
 def get_pdf_list(baseurl):
     response = requests.get(baseurl)
@@ -41,6 +45,8 @@ if __name__ == "__main__":
     parser.add_argument("--delay", type=float, metavar="n", help="Wait n seconds after finishing a download to start a new one")
     args = parser.parse_args()
     pdf_list = get_pdf_list(args.base_url)
+    needed_dl = True
     for i in range_with_status(len(pdf_list)):
-        time.sleep(args.delay)
-        dl_pdf(args.base_url, pdf_list[i], args.target_dir)
+        if needed_dl:
+            time.sleep(args.delay)
+        needed_dl = dl_pdf(args.base_url, pdf_list[i], args.target_dir)
